@@ -3,7 +3,7 @@ const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
 
-
+app.use(express.static('build'))
 app.use(cors())
 app.use(express.json())
 app.use(morgan('tiny'))
@@ -46,13 +46,16 @@ app.get('/api/persons/:id', (request, response) => {
     person ? response.send(person) : response.status(404).end()
 })
 
+app.get('/api/persons/:name', (request, response) => {
+    const person = phoneBook.find(p => p.name === Number(request.params.name))
+    person ? response.send(person) : response.status(404).end()
+})
+
 
 app.post('/api/persons', (request, response) => {
 
     let body = request.body;
-    console.log(request.body)
     if (!body.name || !body.number) {
-       
        return response.status(400).json( {
            error: 'content missing'
        })
@@ -88,23 +91,11 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 
-
-
-
-
-
-
-
-
-
-
-
 let generateId = () => {
 
-    let phoneBookLength = phoneBook.length;
-    let maxId = Math.random(phoneBookLength + 1, 10000 )
+    let maxId = Math.floor(Math.random() * 100000);
 
-    if (phoneBookLength = 0 ) {
+    if (phoneBook.length = 0 ) {
         maxId = 0
     } 
     return maxId;
